@@ -267,7 +267,10 @@ oom = panic
 </code></pre></pre>
 <a class="header" href="2116-alloc-me-maybe.html#try_reserve" id="try_reserve"><h2>try_reserve</h2></a>
 <p><code>try_reserve</code> and <code>try_reserve_exact</code> would be added to <code>HashMap</code>, <code>Vec</code>, <code>String</code>, and <code>VecDeque</code>. These would have the exact same APIs as their infallible counterparts, except that OOM would be exposed as an error case, rather than a call to <code>Alloc::oom()</code>. They would have the following signatures:</p>
-<pre><code>/// Tries to reserve capacity for at least `additional` more elements to be inserted
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+/// Tries to reserve capacity for at least `additional` more elements to be inserted
 /// in the given `Vec&lt;T&gt;`. The collection may reserve more space to avoid
 /// frequent reallocations. After calling `reserve`, capacity will be
 /// greater than or equal to `self.len() + additional`. Does nothing if
@@ -290,9 +293,12 @@ pub enum CollectionAllocErr {
     /// Error due to the allocator (see the `AllocErr` type's docs).
     AllocErr(AllocErr),
 }
-</code></pre>
+#}</code></pre></pre>
 <p>We propose only these methods because they represent a minimal building block that third parties can develop fallible allocation APIs on top of. For instance, here are some basic implementations:</p>
-<pre><code>impl&lt;T&gt; FallibleVecExt&lt;T&gt; for Vec&lt;T&gt; {
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+impl&lt;T&gt; FallibleVecExt&lt;T&gt; for Vec&lt;T&gt; {
     fn try_push(&amp;mut self, val: T) -&gt; Result&lt;(), (T, Err)&gt; {
         if let Err(err) = self.try_reserve(1) { return Err((val, err)) }
         self.push(val);
@@ -309,7 +315,7 @@ pub enum CollectionAllocErr {
         self.extend(iter);
     }
 }
-</code></pre>
+#}</code></pre></pre>
 <p>Note that iterator-consuming implementations are limited to ExactSizeIterator, as this lets us perfectly predict how much space we need. In practice this shouldn't be much of a constraint, as most uses of these APIs just feed arrays into arrays or maps into maps. Only things like <code>filter</code> produce unpredictable iterator sizes.</p>
 <a class="header" href="2116-alloc-me-maybe.html#reference-level-explanation" id="reference-level-explanation"><h1>Reference-level explanation</h1></a>
 <a class="header" href="2116-alloc-me-maybe.html#oompanic-1" id="oompanic-1"><h2>oom=panic</h2></a>
