@@ -217,7 +217,7 @@ fn bewitche() {}
 is valid. This example would be equivalent to
 <code>#[cfg_attr(all(linux, feaure =&quot;multithreaded&quot;), some_other_attribute)]</code>.</p>
 <a class="header" href="2539-cfg_attr-multiple-attrs.html#warning-when-zero-attributes" id="warning-when-zero-attributes"><h2>Warning When Zero Attributes</h2></a>
-<p>This RFC allows <code>#[cfg_attr(predicate)]</code>. This is so that macros can generate
+<p>This RFC allows <code>#[cfg_attr(predicate,)]</code>. This is so that macros can generate
 it. Having it in the source text emits an <code>unused_attributes</code> warning.</p>
 <a class="header" href="2539-cfg_attr-multiple-attrs.html#attribute-syntax-opportunity-cost" id="attribute-syntax-opportunity-cost"><h2>Attribute Syntax Opportunity Cost</h2></a>
 <p>This would be the first place attributes would be allowed in a comma-separated
