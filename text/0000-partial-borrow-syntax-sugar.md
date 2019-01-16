@@ -143,11 +143,11 @@ assert_eq!(add(__x_f32__y_f32 {x, y}), 3.);
 ## Desugaring of `Partial borrow syntax sugar`
 
 ```rust
-struct __x_ref_mut_f32__y_ref_f32<'a> {
+struct __x_ref_a_mut_f32__y_ref_a_f32<'a> {
     x: &'a mut f32,
     y: &'a f32,
 }
-fn add_y_to_x<'a>(v: __x_ref_mut_f32__y_ref_f32<'a>) {
+fn add_y_to_x<'a>(v: __x_ref_a_mut_f32__y_ref_a_f32<'a>) {
     *v.x += *v.y;
 }
 
@@ -158,7 +158,7 @@ struct V3 {
 }
 
 let mut v3=V3 { x: 1., y: 2., z: 3. };
-add_y_to_x(__x_ref_mut_f32__y_ref_f32 {x: &mut v3.x, y: &v3.y});
+add_y_to_x(__x_ref_a_mut_f32__y_ref_a_f32 {x: &mut v3.x, y: &v3.y});
 assert_eq!(
     v3,
     V3 { x: 3., y: 2., z: 3. };
@@ -166,7 +166,7 @@ assert_eq!(
 {
     // non-overlapping partial mutable borrows are allowed
     let z = &mut v3.z;
-    add_y_to_x(__x_ref_mut_f32__y_ref_f32 {x: &mut v3.x, y: &v3.y});
+    add_y_to_x(__x_ref_a_mut_f32__y_ref_a_f32 {x: &mut v3.x, y: &v3.y});
     assert_eq!(
         v3,
         V3 { x: 3., y: 2., z: 3. };
@@ -175,7 +175,7 @@ assert_eq!(
 {
     // overlapping partial mutable borrows are not allowed
     let x = &mut v3.x;
-    add_y_to_x(__x_ref_mut_f32__y_ref_f32 {
+    add_y_to_x(__x_ref_a_mut_f32__y_ref_a_f32 {
         x: &mut v3.x,
         y: &v3.y
     }); // compile-fail: field `x` is already mutably borrowed
@@ -186,34 +186,34 @@ assert_eq!(
 ## Desugaring of `Partial borrow of self`
 
 ```rust
-struct __x_ref_mut_f32__y_ref_mut_f32<'a> {
+struct __x_ref_a_mut_f32__y_ref_a_mut_f32<'a> {
     x: &'a mut f32,
     y: &'a mut f32,
 }
-struct __z_ref_mut_f32<'a> {
+struct __z_ref_a_mut_f32<'a> {
     z: &'a mut f32,
 }
 impl V3 {
-    fn xy_mut<'a>(self_: __x_ref_mut_f32__y_ref_mut_f32<'a>) -> (&'a mut f32, &'a mut f32) {
+    fn xy_mut<'a>(self_: __x_ref_a_mut_f32__y_ref_a_mut_f32<'a>) -> (&'a mut f32, &'a mut f32) {
         (self_.x, self_.y)
     }
 
-    fn z_mut(self_: __z_ref_mut_f32) -> &mut f32 {
+    fn z_mut(self_: __z_ref_a_mut_f32) -> &mut f32 {
         self_.z
     }
 }
 
 let v3=V3 { x: 1., y: 2., z: 3. };
 assert_eq!(
-    V3::xy_mut(__x_ref_mut_f32__y_ref_mut_f32 { x: &mut v3.x, y: &v3.y }),
+    V3::xy_mut(__x_ref_a_mut_f32__y_ref_a_mut_f32 { x: &mut v3.x, y: &v3.y }),
     (&mut 1., &mut 2.)
 );
 {
     // non-overlapping partial mutable borrows are allowed
     let (x, y) = V3::xy_mut(
-        __x_ref_mut_f32__y_ref_mut_f32 { x: &mut v3.x, y: &v3.y }
+        __x_ref_a_mut_f32__y_ref_a_mut_f32 { x: &mut v3.x, y: &v3.y }
     );
-    let z = V3::z_mut(__z_ref_mut_f32 { z: &mut v3.z });
+    let z = V3::z_mut(__z_ref_a_mut_f32 { z: &mut v3.z });
     assert_eq!(
         [x, y, z],
         [&mut 1., &mut 2., &mut 3.]
@@ -223,7 +223,7 @@ assert_eq!(
     // overlapping partial mutable borrows are not allowed
     let x = &mut v3.x;
     let (x2, y) = V3::xy_mut(
-        __x_ref_mut_f32__y_ref_mut_f32 { x: &mut v3.x, y: &v3.y }
+        __x_ref_a_mut_f32__y_ref_a_mut_f32 { x: &mut v3.x, y: &v3.y }
     ); // compile-fail: field `x` is already mutably borrowed
     *x += 1.;
 }
