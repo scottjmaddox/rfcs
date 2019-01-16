@@ -32,7 +32,7 @@ assert_eq!(add({x, y}), 3.);
 ## Partial borrow syntax sugar
 
 ```rust
-fn add_y_to_x(v: {x: &mut f32, b: &f32}) {
+fn add_y_to_x(v: {x: &mut f32, y: &f32}) {
     *v.x += *v.y;
 }
 
@@ -238,7 +238,7 @@ struct Foo<'a, 'b, 'c> {
     c: &'c mut f32,
 }
 
-struct<'a, 'b> __a_ref_a_mut_f32__b_ref_b_f32<'a, 'b> {
+struct __a_ref_a_mut_f32__b_ref_b_f32<'a, 'b> {
     a: &'a mut f32,
     b: &'b mut f32,
 }
