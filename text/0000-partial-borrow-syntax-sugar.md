@@ -79,7 +79,7 @@ impl V3 {
 }
 
 let v3=V3 { x: 1., y: 2., z: 3. };
-assert_eq!(v3.xy_mut(), [&mut 1., &mut 2.]);
+assert_eq!(v3.xy_mut(), (&mut 1., &mut 2.));
 {
     // non-overlapping partial mutable borrows are allowed
     let (x, y) = v3.xy_mut();
@@ -206,7 +206,7 @@ impl V3 {
 let v3=V3 { x: 1., y: 2., z: 3. };
 assert_eq!(
     V3::xy_mut(__x_ref_mut_f32__y_ref_mut_f32 { x: &mut v3.x, y: &v3.y }),
-    [&mut 1., &mut 2.]
+    (&mut 1., &mut 2.)
 );
 {
     // non-overlapping partial mutable borrows are allowed
